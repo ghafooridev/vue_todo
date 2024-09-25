@@ -12,12 +12,10 @@ export const useTodoStore = defineStore('todo-store', {
   // computed
   getters: {
     sorted() {
-      return this.todo.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      return this.todo.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     },
-    saved: (state) =>
-      state.todo
-        .filter((p) => p.is_saved)
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    done: (state) =>
+      state.todo.filter((p) => p.done).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
   },
   // methods
   actions: {
@@ -36,12 +34,11 @@ export const useTodoStore = defineStore('todo-store', {
     },
     addTodo(todo) {
       const newTodo = {
-        id: this.todo.length + 1,
+        id: (+new Date()).toString(),
         title: todo.title,
-        body: todo.body,
-        author: 'Andy Tim',
-        created_at: new Date().toLocaleDateString(),
-        is_saved: false
+        priority: todo.priority,
+        createdAt: new Date().toLocaleDateString(),
+        done: false
       }
 
       this.todo.push(newTodo)
@@ -59,14 +56,14 @@ export const useTodoStore = defineStore('todo-store', {
         method: 'DELETE'
       }).catch((err) => console.log(err))
     },
-    saveTodo(id) {
+    updateTodo(id) {
       const todo = this.todo.find((p) => p.id === id)
-      todo.is_saved = !todo.is_saved
+      todo.done = !todo.done
 
       fetch(`http://localhost:3000/todo/${id}`, {
         method: 'PATCH',
         headers: { 'Content-type': 'application/json' },
-        body: JSON.stringify({ is_saved: todo.is_saved })
+        body: JSON.stringify({ done: todo.done })
       }).catch((err) => console.log(err))
     }
   }

@@ -8,23 +8,21 @@ const todoStore = useTodoStore()
 const todoFilter = ref('all')
 
 const setTodoFilter = () => {
-  todoFilter.value = todoFilter.value === 'all' ? 'saved' : 'all'
+  todoFilter.value = todoFilter.value === 'all' ? 'done' : 'all'
 }
 </script>
 
 <template>
-  <!-- Header -->
   <div class="header">
     <div>
-      <h3>{{ todoFilter === 'all' ? 'All todo' : 'Saved todo' }}</h3>
+      <h3>{{ todoFilter === 'all' ? 'All todo' : 'Done todo' }}</h3>
       <span v-show="todoStore.loading" class="material-icons">cached</span>
     </div>
     <button @click="setTodoFilter">
-      {{ todoFilter === 'all' ? 'Show saved todo' : 'Show all todo' }}
+      {{ todoFilter === 'all' ? 'Show done todo' : 'Show all todo' }}
     </button>
   </div>
 
-  <!-- Error -->
   <div v-if="todoStore.errMsg" class="error">
     {{ todoStore.errMsg }}
   </div>
@@ -37,8 +35,8 @@ const setTodoFilter = () => {
     </div>
   </div>
 
-  <div v-if="todoFilter === 'saved'">
-    <div v-for="todo in todoStore.saved" :key="todo.id">
+  <div v-if="todoFilter === 'done'">
+    <div v-for="todo in todoStore.done" :key="todo.id">
       <Wrapper>
         <TodoItem :todo="todo" />
       </Wrapper>
@@ -48,7 +46,6 @@ const setTodoFilter = () => {
 
 <style lang="scss" scoped>
 .header {
-  background: #fff;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;

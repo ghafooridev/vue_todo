@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, watch } from 'vue'
 import { useTodoStore } from '@/stores/todo'
 import { useRouter } from 'vue-router'
 
@@ -10,17 +10,29 @@ const todoStore = useTodoStore()
 
 const todo = reactive({
   title: '',
-  body: ''
+  priority: ''
 })
 
 const isFormInvalid = computed(() => {
-  return todo.title === '' || todo.body === ''
+  return todo.title === '' || todo.priority === ''
 })
 
 const submit = () => {
   todoStore.addTodo(todo)
-  router.push({ name: 'home' })
+  // router.push({ name: 'home' })
 }
+
+
+watch(
+  () => todoStore.todo, // Watch the todos in the store
+  () => {
+  
+      router.push({ name: 'home' })
+    
+  },
+  { deep: true }  // Ensure deep watching of the todos array
+)
+
 </script>
 
 <template>
@@ -28,12 +40,16 @@ const submit = () => {
     <form @submit.prevent="submit">
       <h3>Create a new todo</h3>
       <div>
-        <label>Todo Title</label>
-        <input type="text" v-model="todo.title" />
+        <label for="title">Todo Title</label>
+        <input id="title" type="text" v-model="todo.title" />
       </div>
       <div>
-        <label>Todo Body</label>
-        <textarea rows="7" v-model="todo.body"></textarea>
+        <label for="priority">Todo Priority</label>
+        <select v-model="todo.priority" id="priority">
+          <option value="High">High</option>
+          <option value="Mid">Mid</option>
+          <option value="Low">Low</option>
+        </select>
       </div>
       <div>
         <button :disabled="isFormInvalid">Add</button>
@@ -45,6 +61,9 @@ const submit = () => {
 <style lang="scss" scoped>
 form {
   padding: 2rem;
+  border: 1px solid #3b82f6;
+  border-radius: 10px;
+  height: 100%;
 }
 h3 {
   margin-bottom: 2rem;
@@ -55,7 +74,7 @@ div {
     font-weight: 300;
   }
   input,
-  textarea {
+  select {
     max-width: 100%;
     min-width: 100%;
     width: 100%;
@@ -77,7 +96,7 @@ div {
       background: #2563eb;
     }
     &:disabled {
-      background: #eee;
+      background: #aaa;
       cursor: not-allowed;
     }
   }
