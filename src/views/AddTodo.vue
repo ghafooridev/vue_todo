@@ -23,13 +23,8 @@ const submit = () => {
 }
 
 
-watch(
-  () => todoStore.todo, // Watch the todos in the store
-  () => {
-  
-      router.push({ name: 'home' })
-    
-  },
+watch(todoStore.todo, // Watch the todos in the store
+  () => router.push({ name: 'home' }),
   { deep: true }  // Ensure deep watching of the todos array
 )
 
